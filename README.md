@@ -29,9 +29,14 @@ error "Somebody gonna get a hurt real bad"
 info "Ready for this? $(highlight "I can't believe my eyes"). It's like looking in a mirror!"
 ```
 
+## Including in another repo
+
+Copy install.sh to your project
+
 Version
 =======
-0.5.0 - Initial release.  Using escape codes instead of tput cause it was mostly done when I found that :)
+* 0.5.1 - Included an install script, easier to use in the setup for another project.
+* 0.5.0 - Initial release.  Using escape codes instead of tput cause it was mostly done when I found that :)
 
 ## License
 
