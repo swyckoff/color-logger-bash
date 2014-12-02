@@ -1,9 +1,11 @@
 #!/bin/bash
 # Some credit to https://github.com/maxtsepkov/bash_colors/blob/master/bash_colors.sh
 #
-# Constants and functions for terminal colors. Not using tput :x
-# Author: Steve Wyckoff  
-# Version: 0.5.0
+# Constants and functions for terminal colors. Not using tput 
+# Author: Steve Wyckoff
+
+COLOR_SCRIPT=color-logger.bash
+COLOR_VERSION=0.8.0
 
 COLOR_ESC="\x1B["
 
@@ -36,14 +38,16 @@ COLOR_MAGENTA_BG=45         # set magenta background
 COLOR_CYAN_BG=46            # set cyan background
 COLOR_WHITE_BG=47           # set white background
 
+COLOR_DEBUG=$COLOR_BLUE
 COLOR_INFO=$COLOR_MAGENTA
 COLOR_HIGHLIGHT=$COLOR_CYAN
 COLOR_WARN=$COLOR_BROWN
 COLOR_ERROR=$COLOR_RED
 
-# General function to wrap string with escape seqence(s).
-# Ex: console_escape foobar $CLR_RED $CLR_BOLD
-escape() {
+COLOR_SUCCESS=$COLOR_GREEN
+
+# TODO https://github.com/swyckoff/bash-color-logger/issues/1
+wrap_escape() {
   local result="$1"
   until [ -z "$2" ]; do
     if ! [ $2 -ge 0 -a $2 -le 47 ] 2>/dev/null; then
@@ -57,27 +61,67 @@ escape() {
 
 declare mode
 
+# PUBLIC API
+debug(){
+  mode=$COLOR_DEBUG
+  wrap_escape "$1" $COLOR_DEBUG
+  echo
+}
+
 info(){
   mode=$COLOR_INFO
-  escape "$1" $COLOR_INFO
+  wrap_escape "$1" $COLOR_INFO
   echo
 }
 
 warn(){
   mode=$COLOR_WARN
-  escape "$1" $COLOR_WARN
+  wrap_escape "$1" $COLOR_WARN
   echo
 }
 
 error(){
   mode=$COLOR_ERROR
-  escape "$1" $COLOR_ERROR
+  wrap_escape "$1" $COLOR_ERROR
   echo
 }
 
 highlight(){
-  escape "$1" $COLOR_HIGHLIGHT 
+  wrap_escape "$1" $COLOR_HIGHLIGHT
   printf "${COLOR_ESC}${mode}m"
+}
+
+success(){
+  mode=$COLOR_SUCCESS
+  wrap_escape "$1" $COLOR_SUCCESS
+  echo
+}
+# END PUBLIC API
+
+show_help() {
+  cat << EOF
+NAME
+  $COLOR_SCRIPT - Add color logging to bash scripts.
+
+SYNOPSIS
+  color-logger.bash [-hcv] logger_function
+
+DESCRIPTION
+  Ideal use is to "source $COLOR_SCRIPT" and then use a logger_function directly in script.
+
+  logger_functions: debug, info, warn, error, success, highlight
+
+  e.g. 'debug "debug message"'
+
+  highlight is a special case. It can be used in conjunection with other logging functions.
+
+  e.g. 'error "epic \$(highlight "fail")"'
+
+OPTIONS
+  -h          Show help
+  -c          Show some pretty colors
+  -v          Show version
+EOF
 }
 
 list_colors(){
@@ -88,36 +132,38 @@ list_colors(){
   for FGs in '   0m' '   1m' '  30m' '1;30m' '  31m' '1;31m' \
     '  32m' '1;32m' '  33m' '1;33m' '  34m' '1;34m' \
     '  35m' '1;35m' '  36m' '1;36m' '  37m' '1;37m';
-do
-  FG=${FGs// /}
-  echo -en " $FGs \033[$FG  $T  "
-  for BG in 40m 41m 42m 43m 44m 45m 46m 47m; do
-    echo -en " \033[$FG\033[$BG  $T  \033[0m";
-  done
-  echo;
-done
+  do
+    FG=${FGs// /}
+    echo -en " $FGs \033[$FG  $T  "
 
+    for BG in 40m 41m 42m 43m 44m 45m 46m 47m; do
+      echo -en " \033[$FG\033[$BG  $T  \033[0m";
+    done
+
+    echo;
+  done
+
+  echo;
+  echo "For what maps the rows and columns to this script you just need to examine $COLOR_SCRIPT"
 }
 
-show_help() {
-  cat << EOF
-  Usage: [-hl]
-  Helpful logging for bash scripts. 
-
-  -h          display this help and exit
-  -c          show colors
-EOF
+show_version(){
+  echo $COLOR_VERSION
 }
 
 OPTIND=1
-while getopts "hl" opt; do
+while getopts "hcv" opt; do
   case "$opt" in
     h)
       show_help
       exit 0
       ;;
-    l)
+    c)
       list_colors
+      exit 0
+      ;;
+    v)
+      show_version
       exit 0
       ;;
     '?')

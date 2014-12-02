@@ -1,43 +1,62 @@
-bash-color-logging
-==================
+#color-logger-bash
 
-An easy way to add colors to your scripts. 
+Add color logging to bash scripts
 
-Usage
-=======
-Pull down the script 
+### Description
+Ideal use is inline.  Sourcing the script and then use a logger function directly in script.
+
+logger functions: debug, info, warn, error, success, highlight
+
+highlight is a special case. It can be used in conjunection with other logging functions.
+
+### Install
+
+##### Globally 
+```
+git clone https://github.com/swyckoff/bash-color-logging.git
+./install.sh
+```
+
+##### Locally
+Pull down the script
 
 ```
-wget https://raw.githubusercontent.com/swyckoff/bash-color-logging/master/color-logging.bash
+wget https://raw.githubusercontent.com/swyckoff/bash-color-logging/master/color-logger.bash
 ```
 
+### Usage
 source in your script
 
 ```
-. color-logging.bash
+. color-logger.bash
 ```
 
-Taste the colors 
+### Logger functions
+debug, info, warn, error, success, highlight
 
+### Taste the colors... examples
 ```
+debug "Hold on to your butts."
+
 info "It's got a dragon painted right on the blade!"
 
 warn "Danger, Will Robinson!"
 
-error "Somebody gonna get a hurt real bad"
+error "Somebody gonna get a hurt real bad."
 
-info "Ready for this? $(highlight "I can't believe my eyes"). It's like looking in a mirror!"
+success "So you're telling me there's a chance..."
+
+info "More Obscure?? Okay... $(highlight "I can't believe my eyes"). It's like looking in a mirror!"
 ```
 
-## Including in another repo
+### More help
+```
+color-logger.bash -h
+```
 
-Copy install.sh to your project
+### Problems? Contributing?
+* See/Add issues!
 
-Version
-=======
-* 0.5.1 - Included an install script, easier to use in the setup for another project.
-* 0.5.0 - Initial release.  Using escape codes instead of tput cause it was mostly done when I found that :)
-
-## License
+### License
 
 MIT
