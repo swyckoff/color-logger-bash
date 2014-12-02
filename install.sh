@@ -1,12 +1,19 @@
 #!/bin/bash
 
-readonly LOGGER=color-logging.bash
+set -e
 
-echo "Installing..."
+readonly VERSION=$(cat .version)
 
-if [[ ! -e $LOGGER ]]; then
-  echo "Installing color logger"
+readonly INSTALL_DIR=/usr/local/bin
+readonly LOGGER=color-logger.bash
 
-  wget "https://raw.githubusercontent.com/swyckoff/bash-color-logging/master/$LOGGER"
-  chmod 0755 $LOGGER
+readonly LOGGER_VERSION=$("$LOGGER" -v)
+
+if [[ ! -e "$INSTALL_DIR/$LOGGER"  || ! "$VERSION" == "$LOGGER_VERSION" ]]; then
+  echo "Installing $LOGGER to $INSTALL_DIR"
+
+  chmod 0755 "$LOGGER"
+  cp "$LOGGER" "$INSTALL_DIR/$LOGGER"
+else
+  echo "Nothing to install, you have version $VERSION"
 fi
