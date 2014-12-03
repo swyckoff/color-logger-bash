@@ -11,12 +11,19 @@ highlight is a special case. It can be used in conjunection with other logging f
 
 ### Install
 
-##### Globally 
+##### Globally
 ```
 git clone https://github.com/swyckoff/bash-color-logger.git
 ./install.sh
 ```
 
+or this (which is what install does)
+
+```
+cd /usr/local/bin
+wget https://raw.githubusercontent.com/swyckoff/color-logger-bash/master/color-logger.bash
+cd -
+```
 ##### Locally
 Pull down the script
 
