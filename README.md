@@ -2,6 +2,8 @@
 
 Add color logging to bash scripts
 
+![terminal sample](https://raw.githubusercontent.com/swyckoff/color-logger-bash/master/img/terminal_sample.png)
+
 ### Description
 Ideal use is inline.  Sourcing the script and then use a logger function directly in script.
 
