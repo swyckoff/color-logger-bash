@@ -53,8 +53,10 @@ error "Somebody gonna get a hurt real bad."
 
 success "So you're telling me there's a chance..."
 
-info "More Obscure?? Okay... $(highlight "I can't believe my eyes"). It's like looking in a mirror!"
+info "More Obscure?? Okay... " "$(highlight "I can't believe my eyes"). " "It's like looking in a mirror!"
 ```
+
+Be sure to notice that highlight requires the "$()" format to deal with subshell issues maintaining the integrity of the message.
 
 ### More help
 ```
