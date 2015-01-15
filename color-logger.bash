@@ -1,11 +1,11 @@
 #!/bin/bash
 # Some credit to https://github.com/maxtsepkov/bash_colors/blob/master/bash_colors.sh
 #
-# Constants and functions for terminal colors. Not using tput 
+# Constants and functions for terminal colors. Not using tput
 # Author: Steve Wyckoff
 
 COLOR_SCRIPT=color-logger.bash
-COLOR_VERSION=0.8.0
+COLOR_VERSION=0.9.0
 
 COLOR_ESC="\x1B["
 
@@ -46,55 +46,60 @@ COLOR_ERROR=$COLOR_RED
 
 COLOR_SUCCESS=$COLOR_GREEN
 
-# TODO https://github.com/swyckoff/bash-color-logger/issues/1
-wrap_escape() {
-  local result="$1"
-  until [ -z "$2" ]; do
-    if ! [ $2 -ge 0 -a $2 -le 47 ] 2>/dev/null; then
-      echo "escape: argument \"$2\" is out of range" >&2 && return 1
-    fi
-    result="${COLOR_ESC}${2}m${result}${COLOR_ESC}${COLOR_RESET}m"
-    shift || break
-  done
-  echo -ne "$result"
+logger_wrap_escape() {
+  local paint="$1"
+  local message="$2"
+
+  if ! [ $paint -ge 0 -a $paint -le 47 ] 2>/dev/null; then
+    echo "escape: argument for \"$paint\" is out of range" >&2 && return 1
+  fi
+
+  if [ -z "$message" ]; then
+    echo "No message passed in"
+
+    exit 1
+  fi
+
+  message="${COLOR_ESC}${paint}m${message}${COLOR_ESC}${COLOR_RESET}m"
+
+  echo -ne "$message"
 }
 
-declare mode
+logger_color(){
+  local paint="$1"
+  shift
+
+  for message in "$@";
+  do
+    logger_wrap_escape "$paint" "$message"
+  done
+
+  echo
+}
 
 # PUBLIC API
 debug(){
-  mode=$COLOR_DEBUG
-  wrap_escape "$1" $COLOR_DEBUG
-  echo
+  logger_color "$COLOR_DEBUG" "$@"
 }
 
 info(){
-  mode=$COLOR_INFO
-  wrap_escape "$1" $COLOR_INFO
-  echo
+  logger_color "$COLOR_INFO" "$@"
 }
 
 warn(){
-  mode=$COLOR_WARN
-  wrap_escape "$1" $COLOR_WARN
-  echo
+  logger_color "$COLOR_WARN" "$@"
 }
 
 error(){
-  mode=$COLOR_ERROR
-  wrap_escape "$1" $COLOR_ERROR
-  echo
+  logger_color "$COLOR_ERROR" "$@"
 }
 
 highlight(){
-  wrap_escape "$1" $COLOR_HIGHLIGHT
-  printf "${COLOR_ESC}${mode}m"
+  logger_wrap_escape $COLOR_HIGHLIGHT "$1"
 }
 
 success(){
-  mode=$COLOR_SUCCESS
-  wrap_escape "$1" $COLOR_SUCCESS
-  echo
+  logger_color "$COLOR_SUCCESS" "$@"
 }
 # END PUBLIC API
 
@@ -115,7 +120,7 @@ DESCRIPTION
 
   highlight is a special case. It can be used in conjunection with other logging functions.
 
-  e.g. 'error "epic \$(highlight "fail")"'
+  e.g. 'error "epic" "\$(highlight "fail")" "as usual"'
 
 OPTIONS
   -h          Show help
